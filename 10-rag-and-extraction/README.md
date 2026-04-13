@@ -18,7 +18,13 @@
 
 - ⚡ [Retrieval-Augmented Generation for AI-Generated Content: A Survey](https://arxiv.org/abs/2402.19473) -- RAG 领域全面综述（组里的 Survey）
 
-### 代表性工作
+### 基础论文：检索与生成的基石
+
+- ⚡ [Dense Passage Retrieval for Open-Domain Question Answering (DPR)](https://arxiv.org/abs/2004.04906) (EMNLP 2020) -- **密集检索的开创性工作**：用双塔 BERT 编码 query 和 passage，证明密集向量检索在 Open-QA 上全面超越 BM25，是所有 RAG 系统的检索基础
+- ⚡ [Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks (RAG)](https://arxiv.org/abs/2005.11401) (NeurIPS 2020) -- **RAG 概念的提出者**：将检索器和生成器端到端联合训练，首次证明"检索 + 生成"范式在知识密集型任务上的优越性
+- ⚡ [Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection](https://arxiv.org/abs/2310.11511) (ICLR 2024) -- 模型自主决定何时检索、检索后自我评判生成质量，超越 ChatGPT + RAG 基线
+
+### 知识组织与高级检索
 
 - ⚡ [GraphRAG](https://github.com/microsoft/graphrag) -- 基于图结构的检索增强生成
 - ⚡ [RAPTOR: Recursive Abstractive Processing for Tree-Organized Retrieval](https://arxiv.org/abs/2401.18059v1) -- 递归抽象处理的层次化检索
@@ -104,8 +110,9 @@ data/profiles/{profile}/
 
 ## 学习建议
 
-1. 先阅读 RAG Survey 了解检索增强生成的全貌
-2. GraphRAG 和 RAPTOR 代表了两种不同的知识组织思路，值得对比学习
+1. **先读 DPR 和 RAG 原始论文**：理解"密集检索 + 生成"的基本范式，这是后续所有工作的基础
+2. **再读 Self-RAG**：了解模型如何自主决定检索时机和评判检索质量，代表 RAG 的最新演进方向
+3. GraphRAG 和 RAPTOR 代表了两种不同的知识组织思路，值得对比学习
 3. **动手跑 DataMind**：将自己的文档/数据放入 `data/profiles/default/` 目录，体验从数据到智能问答的完整流程
 4. 思考 DataFlow → DataFlex → DataMind 三件套如何串联起 DCAI 的"数据准备 → 训练 → 推理"全链路
 

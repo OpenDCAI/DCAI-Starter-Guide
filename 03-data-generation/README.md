@@ -21,12 +21,14 @@
 
 ### 代表性工作
 
+- ⚡ [Self-Instruct: Aligning Language Models with Self-Generated Instructions](https://arxiv.org/abs/2212.10560) -- **数据自生成的里程碑工作**：模型自动生成指令+回答，175 条种子指令 → 52K 训练样本
+- ⚡ [Constitutional AI: Harmlessness from AI Feedback (CAI)](https://arxiv.org/abs/2212.08073) (Anthropic) -- 用 AI 反馈替代人类标注，通过"宪法原则"引导模型自我修正，是 RLHF 的重要替代思路
 - ⚡ [MAGPIE: Alignment Data Synthesis from Scratch by Prompting Aligned LLMs with Nothing](https://arxiv.org/abs/2406.08464) -- 仅通过 Prompt 对齐的 LLM 从零生成对齐数据
-- 💎 [Self-Instruct: Aligning Language Models with Self-Generated Instructions](https://arxiv.org/abs/2212.10560) -- 自动生成指令数据的经典工作
-- 💎 [Evol-Instruct: WizardLM](https://arxiv.org/abs/2304.12244) -- 渐进式数据增强
+- 💎 [Evol-Instruct: WizardLM](https://arxiv.org/abs/2304.12244) -- 渐进式数据增强，逐步提升指令复杂度
 
-### 大模型的思考与数据生成
+### 自举与自我对抗 (Self-Play & Bootstrapping)
 
+- ⚡ [STaR: Bootstrapping Reasoning With Reasoning](https://arxiv.org/abs/2203.14465) (NeurIPS 2022) -- **推理自举的关键论文**：让模型先生成推理链，保留答对的样本，用正确推理链微调模型，循环迭代
 - 💡 [GPT 等大模型思考机制](https://arxiv.org/abs/2409.12917) -- 基于 RL 的思考机制研究
 - 💡 自我对抗学习方向：模型如何 Verify 自身输出的正确性
 

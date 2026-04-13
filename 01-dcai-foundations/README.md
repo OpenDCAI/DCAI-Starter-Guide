@@ -20,8 +20,10 @@
 
 ## 领域综述
 
-- [Data-centric Artificial Intelligence: A Survey](https://arxiv.org/abs/2303.10158) -- DCAI 领域全面综述
-- [A Survey of Multimodal Large Language Model from A Data-centric Perspective](https://arxiv.org/abs/2405.16640) -- 多模态 LLM 数据侧综述
+- ⚡ [Data-centric Artificial Intelligence: A Survey](https://arxiv.org/abs/2303.10158) -- DCAI 领域全面综述，系统梳理了数据质量、数据量和数据治理的方法论
+- ⚡ [Towards Next-Generation LLM Training: From the Data-Centric Perspective](https://arxiv.org/abs/2603.14712) -- 从 DCAI 视角审视下一代 LLM 训练范式（组里的综述）
+- 💎 [A Survey of Multimodal Large Language Model from A Data-centric Perspective](https://arxiv.org/abs/2405.16640) -- 多模态 LLM 数据侧综述
+- 💎 [DataComp: In Search of the Next Generation of Multimodal Datasets](https://arxiv.org/abs/2304.14108) -- 通过数据竞赛证明"选对数据"比"换模型"更有效，DCAI 思想的实证体现
 
 ## 学习建议
 

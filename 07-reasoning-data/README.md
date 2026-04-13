@@ -29,13 +29,20 @@
 - 💎 [InternLM-Math](https://arxiv.org/abs/2402.06332)
 - 💎 [MathBench: Evaluating LLMs with a Hierarchical Mathematics Benchmark](https://arxiv.org/abs/2405.12209)
 
-### Math Datasets
+### 推理数据合成与处理
 
 - ⚡ [Math Dataset Survey](https://arxiv.org/pdf/2504.16891)
 - ⚡ [Math Data Construction](https://arxiv.org/abs/2504.11456)
 - 💎 [DeepSeekMath Dataset](https://arxiv.org/abs/2402.03300) -- 数学知识按难度分为小学、初中、高中和大学
 
 > **观察**：无论是否是 Math 模型，在 SFT 之后高中和大学数学能力都会大幅度下降，说明数据集的构建不利于高中和大学数学能力的学习。
+
+### Code & STEM 推理数据
+
+- ⚡ [StarCoder 2 and The Stack v2: The Next Generation](https://arxiv.org/abs/2402.19173) -- **代码数据处理的标杆**：619 种语言、67.5TB 代码数据的完整处理流水线，包含去重、PII 去除、质量过滤等，是数据工程在代码领域的最佳实践
+- ⚡ [OpenCoder: The Open Cookbook for Top-Tier Code LLMs](https://arxiv.org/abs/2411.04905) -- 开源代码模型完整数据手册，详细公开了数据配比、清洗、去重、退火策略
+- 💎 [DeepSeek-Coder-V2: Breaking the Barrier of Closed-Source Models in Code Intelligence](https://arxiv.org/abs/2406.11931) -- 代码模型训练中 MoE + 多阶段数据策略的成功案例
+- 💎 [SciLitLLM: How to Adapt LLMs for Scientific Literature Understanding](https://arxiv.org/abs/2408.15545) -- 面向科学文献理解的 LLM 适配方法
 
 ## 实战配套
 
