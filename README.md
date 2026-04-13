@@ -1,14 +1,6 @@
 <p align="center">
     <h1 align="center">OpenDCAI Tutorial</h1>
     <p align="center">Data-Centric AI 学习指南</p>
-    <p align="center">
-        <a href="https://github.com/PKU-DCAI">
-            <img alt="Static Badge" src="https://img.shields.io/badge/%C2%A9-PKU--DCAI-%230e529d?labelColor=%23003985">
-        </a>
-        <a href="https://github.com/PKU-DCAI">
-            <img alt="Static Badge" src="https://img.shields.io/badge/PKU--DCAI-black?logo=github">
-        </a>
-    </p>
 </p>
 
 ## 项目简介
