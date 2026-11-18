@@ -1,0 +1,179 @@
+{
+  "description": "人工构造的英文短评教学数据；d01-d08 是同一负面短评被重复收录并标错的样本。纠错表来自对训练短评的人工核查。",
+  "train": [
+    {
+      "id": "p01",
+      "text": "good tasty meal",
+      "label": "positive"
+    },
+    {
+      "id": "p02",
+      "text": "great friendly service",
+      "label": "positive"
+    },
+    {
+      "id": "p03",
+      "text": "excellent clean room",
+      "label": "positive"
+    },
+    {
+      "id": "p04",
+      "text": "nice fresh food",
+      "label": "positive"
+    },
+    {
+      "id": "p05",
+      "text": "wonderful quick delivery",
+      "label": "positive"
+    },
+    {
+      "id": "p06",
+      "text": "pleasant helpful staff",
+      "label": "positive"
+    },
+    {
+      "id": "n01",
+      "text": "bad stale meal",
+      "label": "negative"
+    },
+    {
+      "id": "n02",
+      "text": "awful rude service",
+      "label": "negative"
+    },
+    {
+      "id": "n03",
+      "text": "terrible dirty room",
+      "label": "negative"
+    },
+    {
+      "id": "n04",
+      "text": "poor cold food",
+      "label": "negative"
+    },
+    {
+      "id": "n05",
+      "text": "horrible slow delivery",
+      "label": "negative"
+    },
+    {
+      "id": "n06",
+      "text": "unpleasant unhelpful staff",
+      "label": "negative"
+    },
+    {
+      "id": "d01",
+      "text": "bad stale meal",
+      "label": "positive"
+    },
+    {
+      "id": "d02",
+      "text": "bad stale meal",
+      "label": "positive"
+    },
+    {
+      "id": "d03",
+      "text": "bad stale meal",
+      "label": "positive"
+    },
+    {
+      "id": "d04",
+      "text": "bad stale meal",
+      "label": "positive"
+    },
+    {
+      "id": "d05",
+      "text": "bad stale meal",
+      "label": "positive"
+    },
+    {
+      "id": "d06",
+      "text": "bad stale meal",
+      "label": "positive"
+    },
+    {
+      "id": "d07",
+      "text": "bad stale meal",
+      "label": "positive"
+    },
+    {
+      "id": "d08",
+      "text": "bad stale meal",
+      "label": "positive"
+    }
+  ],
+  "validation": [
+    {
+      "id": "v01",
+      "text": "good fresh meal",
+      "label": "positive"
+    },
+    {
+      "id": "v02",
+      "text": "excellent helpful service",
+      "label": "positive"
+    },
+    {
+      "id": "v03",
+      "text": "bad cold meal",
+      "label": "negative"
+    },
+    {
+      "id": "v04",
+      "text": "terrible rude staff",
+      "label": "negative"
+    }
+  ],
+  "test": [
+    {
+      "id": "t01",
+      "text": "good clean room",
+      "label": "positive"
+    },
+    {
+      "id": "t02",
+      "text": "great quick service",
+      "label": "positive"
+    },
+    {
+      "id": "t03",
+      "text": "nice tasty food",
+      "label": "positive"
+    },
+    {
+      "id": "t04",
+      "text": "wonderful helpful staff",
+      "label": "positive"
+    },
+    {
+      "id": "t05",
+      "text": "bad stale food",
+      "label": "negative"
+    },
+    {
+      "id": "t06",
+      "text": "bad dirty room",
+      "label": "negative"
+    },
+    {
+      "id": "t07",
+      "text": "awful slow delivery",
+      "label": "negative"
+    },
+    {
+      "id": "t08",
+      "text": "poor rude service",
+      "label": "negative"
+    }
+  ],
+  "label_corrections": {
+    "d01": "negative",
+    "d02": "negative",
+    "d03": "negative",
+    "d04": "negative",
+    "d05": "negative",
+    "d06": "negative",
+    "d07": "negative",
+    "d08": "negative"
+  }
+}

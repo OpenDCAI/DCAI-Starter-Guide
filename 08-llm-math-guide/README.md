@@ -2,6 +2,22 @@
 - 作者：[@Sunnyhaze](https://github.com/SunnyHaze)
 - 旨在快速让新手在初步了解LLM背后，希望能上手代码快速微调模型，获得一些正反馈来激励自己继续精进LLM的学习。
 - 本仓库欢迎后来者实践的过程中提出PR，也可以积极联系前辈修改完善！
+## 第一次学习与运行条件
+
+先完成 [00 的复旦教材选读与自测](../00-prerequisites/)，理解 SFT、LoRA、验证集与测试集。第一次接触代码的同学先做[无需 GPU 的数据实验](../00-prerequisites/first-dcai-experiment/)，再进入本章。
+
+本章保留了作者的 Qwen2.5 实验配置和结果。它使用 CUDA GPU、`bf16` 和 `flash_attn: fa2`，不是普通电脑上直接运行的配置；当前材料未提供可复用的显存与耗时测量，也未固定完整依赖版本。没有对应环境时，可以先学习数据格式和最后的评估分析。
+
+开始训练前，逐项确认：
+
+- 按 [LLaMA-Factory 官方说明](https://github.com/hiyouga/LLaMA-Factory#installation)准备兼容的软件环境，记录 Python、PyTorch、CUDA、LLaMA-Factory 与评测框架版本，安装后运行 `llamafactory-cli version`。
+- 确认所用 GPU 和依赖支持配置中的精度与 attention 实现；遇到相关报错时按官方说明调整，不把它当作数据问题。
+- 将 YAML 和脚本中 `/mnt/data1/xiaochen/...` 的模型、数据、日志与输出路径全部替换成自己的路径。下文命令默认从本章目录运行；克隆工具后切换目录时，注意回到本章或使用配置文件的完整路径。
+- 先用少量训练样本、短训练步数检查数据加载、loss 输出和 checkpoint 保存；这一步仅验证流程，不能据此报告模型效果。记录实际显存与耗时，再决定是否扩大训练。
+- 用相同评测设置比较原模型与微调模型，并保存逐题输出。最后一节已展示答案提取规则对分数的影响，建议先读一遍；学会输出 `####` 不等于数学能力必然提高。
+
+**完成标准**：能解释一条训练样本，按验证集选择 checkpoint，给出训练前后采用相同规则的测试结果，并检查至少一个失败案例。
+
 ## 前言
 - 目前对于LLM的Supervised Finetune（SFT），非常常用且封装的很好的工具就是LLAMA-Factory。几乎只需要下载好数据集和模型，修改配置文件（比如JSON和YAML）即可实现LLM的训练和微调，目前LLAMA-FACTORY支持了llama，qwen等等性能很好的主流常见基座模型，可以极其方便的开展下游SFT训练实验。此外，一些PPO和DPO这样的强化学习微调算法，也可以被LLAMA-factory支持。
 - LLM在完成训练后，如何量化评估模型的性能也是个麻烦事儿。一般来说对于数学任务，采用正则匹配答案的位置，并计算准确率是比较常见的方案。这里选择了一个也比较广泛使用的框架[lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness)，这样可以比较高效的完成模型inference并自动按照规则正则匹配是否有正确答案，并计算准确率。
@@ -31,12 +47,12 @@ GSM8k数据集是一个包含8.5k条小学数学题的数据集，包含自然�
     {
         "input": "Alexis is applying for a new job and bought a new set of business clothes to wear to the interview. She went to a department store with a budget of $200 and spent $30 on a button-up shirt, $46 on suit pants, $38 on a suit coat, $11 on socks, and $18 on a belt. She also purchased a pair of shoes, but lost the receipt for them. She has $16 left from her budget. How much did Alexis pay for the shoes?",
         "output": "Let S be the amount Alexis paid for the shoes.\nShe spent S + 30 + 46 + 38 + 11 + 18 = S + <<+30+46+38+11+18=143>>143.\nShe used all but $16 of her budget, so S + 143 = 200 - 16 = 184.\nThus, Alexis paid S = 184 - 143 = $<<184-143=41>>41 for the shoes.\n#### 41"
-    },
+    }
 ```
 特别注意，这个问答在输出时，末尾会以`#### xxx`这个格式输出最终的答案。这个也是观察我们SFT是否有效的一个参考。，
 
 
-`datasets`是由huggingface管理的一个python库，可以直接通过pip下载。上面管理了许多NLP、CV和多模态的经典任务，可以非常方便的下载各种数据集。`datasets`库的官方文档请参考[这里](https://arxiv.org/abs/2110.14168)。我们这里使用该库下载GSM8k数据集。在任意路径下，创建并copy如下python代码即可下载数据集，注意，需要修改缓存目录为你的工作路径。（此文件在本仓库的[./dataset_scripts/download_gsm8k.py](./dataset_scripts/download_gsm8k.py)下也有一份）
+`datasets`是由huggingface管理的一个python库，可以直接通过pip下载。上面管理了许多NLP、CV和多模态的经典任务，可以非常方便的下载各种数据集。`datasets`库的官方文档请参考[这里](https://huggingface.co/docs/datasets/)。我们这里使用该库下载GSM8k数据集。在任意路径下，创建并copy如下python代码即可下载数据集，注意，需要修改缓存目录为你的工作路径。（此文件在本仓库的[./dataset_scripts/download_gsm8k.py](./dataset_scripts/download_gsm8k.py)下也有一份）
 ```python
 import os
 import datasets
@@ -84,7 +100,7 @@ print(dataset['train'][0])
 modelscope download --model Qwen/Qwen2.5-7B-Instruct --local_dir /mnt/data1/xiaochen/llm/models/Qwen2.5-7B-Instruct
 ```
 
-同理[Qwen2.5-1.5B-Instruct](https://www.modelscope.cn/models/Qwen/Qwen2.5-7B-Instruct/)的下载：
+同理[Qwen2.5-1.5B-Instruct](https://www.modelscope.cn/models/Qwen/Qwen2.5-1.5B-Instruct/)的下载：
 modelscope download --model Qwen/Qwen2.5-1.5B-Instruct --local_dir /mnt/data1/xiaochen/llm/models/Qwen2.5-1.5B-Instruct
 ## 模型训练
 LLAMA-FACTORY目前的训练通过一个`yaml`文件管理所有的训练参数。官方提供了大量的样例以供参考：[Github的examples](https://github.com/hiyouga/LLaMA-Factory/tree/main/examples/train_lora)。
@@ -93,7 +109,7 @@ LLAMA-FACTORY目前的训练通过一个`yaml`文件管理所有的训练参数�
 ```yaml
 ### qwen2.5-1.5B-Instruct-gsm8k.yaml
 ### model
-model_name_or_path: /mnt/data1/xiaochen/llm/models/Qwen2.5-1.5B-Instruct # 使用下载好的Qwen2.5-7b
+model_name_or_path: /mnt/data1/xiaochen/llm/models/Qwen2.5-1.5B-Instruct # 使用下载好的 1.5B 模型
 trust_remote_code: true
 
 ### method
@@ -165,7 +181,7 @@ tensorboard --logdir ./
 这里发现loss最低处在400 step时，则保留这个checkpoint作为我们训练好的模型。因为后续验证集的loss又呈现上升趋势，所以400step以后的训练可能是过拟合的。（因为显卡数量和batchsize不同，所以复现时的step数可能不一样）
 
 ## 合并SFT后做好的模型参数和原始参数
-如果你了解Lora的训练技术，你会知道LORA本身只训练了一组低秩矩阵的参数并保存，如果想在下游任务做评估，则需要先将lora参数和模型原始参数合并生成出新的checkpoint参数以供其他框架调用。
+本教程采用先合并 LoRA 参数与原模型、再评测导出模型的流程。请保留原模型与 adapter，确认导出路径指向新目录，避免覆盖原模型。
 
 这个过程也需要通过yaml配合命令行的方式实现，一个样例yaml如下，其他的所有yaml都在`./merge_yaml`路径下：
 ```yaml
@@ -192,7 +208,7 @@ llamafactory-cli export ./merge_yaml/merge_config_qwen2-5_1-5b_instruct_gsm8k_lo
 ## 评估模型性能
 这里作者选择了`lm-eval-harness`这个框架作为评估的框架。
 - 官方github：[https://github.com/EleutherAI/lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness)
-- 有个比较长和全面的安装使用教程，但是很多功能走马观花看一下即可，很多暂时用不到：[教程链接](https://medium.com/@cch.chichieh/llm-%E8%A9%95%E4%BC%B0%E6%95%99%E5%AD%B8-eleutherai-lm-evaluation-harness-42628a4362f7#id_token=eyJhbGciOiJSUzI1NiIsImtpZCI6ImVlYzUzNGZhNWI4Y2FjYTIwMWNhOGQwZmY5NmI1NGM1NjIyMTBkMWUiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiIyMTYyOTYwMzU4MzQtazFrNnFlMDYwczJ0cDJhMmphbTRsamRjbXMwMHN0dGcuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiIyMTYyOTYwMzU4MzQtazFrNnFlMDYwczJ0cDJhMmphbTRsamRjbXMwMHN0dGcuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDkwMDM0Mzg1OTIzNTMyMDQwOTUiLCJlbWFpbCI6ImZiYW5odWExMTIzQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYmYiOjE3MzkwMDkxNjIsIm5hbWUiOiJubiBubiIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NMSUxuYXgwUS1Kd2NLVUstNlJNZnBwZ29yU1A0U19jdHFub08yWXRSRmtxV2ZVc0ZJPXM5Ni1jIiwiZ2l2ZW5fbmFtZSI6Im5uIiwiZmFtaWx5X25hbWUiOiJubiIsImlhdCI6MTczOTAwOTQ2MiwiZXhwIjoxNzM5MDEzMDYyLCJqdGkiOiJhMWIwNzY3N2EwMWU2OTU3ZTE2MWVhMWE1NGUwOGE3ZjE3NmU0ZGYwIn0.oC9JTA1bLjqtrN9YV16Qt9w86OCCkAsWF84nW7O0cfTQ-lbv4OGj1SfXfsPRzHvaS5V4eNPL2_ZhL9VM6wPiXDwUpqcPXe7YAnSfugeJdaRDOlI8a6TbAhFsle2Qn3Dq9BdnD2aJERIe3rgbZ04Vb_uChI5AvRvsieKLOwpy_sHVxDbuViSkcOw-eM-aCDbM3CRHKwYqWA6WkF2GJG3-CCbzuKNadDJhfO0BPThZA7cqce7lXDq8olJADXVVL8Wv8T95FqEQZVBxcONhtSnMGzbPyFb-ksBudkS6LGREzhR1MGgHy8qDeKM8m-D1ZCkij7VJoq1XB4h8Vq5VzLn9MA)
+- 有个比较长和全面的安装使用教程，但是很多功能走马观花看一下即可，很多暂时用不到：[教程链接](https://medium.com/@cch.chichieh/llm-%E8%A9%95%E4%BC%B0%E6%95%99%E5%AD%B8-eleutherai-lm-evaluation-harness-42628a4362f7)
 
 
 如果只是精简地想要完成使用，那参考官方github的命令，在某个工作路径下执行如下命令完成安装即可：
@@ -209,7 +225,7 @@ lm_eval --model hf --model_args pretrained="/mnt/data1/xiaochen/llm/models/qwen-
 ```shell
 accelerate launch -m lm_eval --model hf --model_args pretrained="/mnt/data1/xiaochen/llm/models/qwen-gsm8k-sft/Qwen2.5-1.5B-Instruct" --tasks gsm8k --batch_size 8 --output_path ./eval_results --num_fewshot 0
 ```
-注意，这种方式会额外下载一份gsm8k数据集，如果想要直接使用刚才下载到本地的gsm8k数据集，可以通过复制`\lm-evaluation-harness\lm_eval\tasks\gsm8k\gsm8k.yaml`这个文件，按照官方教程重命名一份为`gsm8k_local.yaml`，然后按照[官方教程](\lm-evaluation-harness\lm_eval\tasks\gsm8k)修改路径即可。
+注意，这种方式会额外下载一份gsm8k数据集，如果想要直接使用刚才下载到本地的gsm8k数据集，可以通过复制`\lm-evaluation-harness\lm_eval\tasks\gsm8k\gsm8k.yaml`这个文件，按照官方教程重命名一份为`gsm8k_local.yaml`，然后按照[官方任务配置说明](https://github.com/EleutherAI/lm-evaluation-harness/blob/main/docs/task_guide.md)修改路径即可。
 
 所有的指令在`lm_eval_scripts`下有本实验使用到的一些对应的`shell`脚本可以方便的重复试验。
 
